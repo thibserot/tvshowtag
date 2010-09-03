@@ -1,0 +1,4 @@
+The script take as input a filename from this,it guesses the tv show name, season
+and episode, then go on epguides.com to find the episode name. After this it goes
+on tvsubtitles.net and download the subtitle (by default in english but it is 
+customizable) then rename it to match the video name.
