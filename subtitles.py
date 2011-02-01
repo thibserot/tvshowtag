@@ -1,7 +1,7 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
-import re, urllib, sys, os.path, shutil, zipfile
+import re, urllib, sys, os.path, shutil, zipfile, difflib
 from math import sqrt
 
 def convertShow(show):
@@ -16,18 +16,44 @@ def convertShow(show):
     res = res.replace(' ','+')
     return res
 
-def getUrlShow(htmlSource):
-    p = re.search('<a href="(/tvshow.*?)">',htmlSource)
-    if not p:
-        print "Can't find the show's subtitle"
-        return -1
-    return  "http://www.tvsubtitles.net" + p.group(1)
+def getUrlShow(show,htmlSource):
+    list = re.findall('<a href="(/tvshow.*?)">([^<]*)</a>',htmlSource)
+    print list
+
+    if len(list) == 1:
+        return "http://www.tvsubtitles.net" + list[0][0]
+    else:
+        matches = []
+        for l in list:
+            title = l[1]
+            title = re.sub("\([0-9]{4}-[0-9]{4}\)","",title)
+            title = title.strip()
+            matches += [title,]
+        print matches
+        res = difflib.get_close_matches(show,matches,1)
+        if len(res) == 0:
+            print "Couldn't find a close match"
+            return -1
+        else:
+            i = 0
+            for m in matches:
+                if m == res[0]:
+                    break
+                i = i + 1
+            url = "http://www.tvsubtitles.net" + list[i][0]
+            print url
+            return url
+    #p = re.search('<a href="(/tvshow.*?)">',htmlSource)
+    #if not p:
+    #    print "Can't find the show's subtitle"
+    #    return -1
+    #return  "http://www.tvsubtitles.net" + p.group(1)
 
 def getShow(show):
     url = "http://www.tvsubtitles.net/search.php?q="+convertShow(show)
     print url
     htmlSource = urllib.urlopen(url).read()
-    res =getUrlShow(htmlSource)
+    res =getUrlShow(show,htmlSource)
     return res
 
 def getEpisodeUrl(htmlSource,season,episode,lang):

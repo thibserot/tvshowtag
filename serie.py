@@ -38,7 +38,7 @@ else:
     ext = ""
 
 
-p = re.search("(.*?).([0-9]{1,2})[A-Za-z\. ]{1,2}([0-9]{1,2})(.*)"+ext,f)
+p = re.search("(.*?)[^0-9]([0-9]{1,2})[A-Za-z\. ]{1,2}([0-9]{1,2})(.*)"+ext,f)
 if not p:
     print "Can't parse the filename"
     sys.exit()
@@ -86,7 +86,15 @@ print "Ep : " + str(ep)
 url = "http://epguides.com/" + title
 print url
 htmlSource = urllib.urlopen(url).read()
-
+if re.search("HTTP Error 404",htmlSource):
+    print "Wrong url"
+    if url.upper()[-2:] == "US":
+        url = url[:-2] + "_US"
+        print "Trying with ",url
+        htmlSource = urllib.urlopen(url).read()
+        print show
+    else:
+        sys.exit()
 
 p = re.search("<title>(.*?)\(a Titles.*?Air Dates Guide\)</title>",htmlSource)
 if not p:
