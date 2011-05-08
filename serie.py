@@ -23,7 +23,7 @@ def rename(film = "",lang="en",format="%showname %seasonx%epnumber %eptitle", OU
     else:
         ext = ""
     
-    # Trying to find the tvshow's name, its episod and season
+    # Trying to find the tvshow's name, its episode and season
     p = re.search("(.*?)[^0-9]([0-9]{1,2})[A-Za-z\. ]{1,2}([0-9]{1,2})(.*)"+ext,f)
     if not p:
         print "Can't parse the filename"
@@ -140,12 +140,12 @@ def rename(film = "",lang="en",format="%showname %seasonx%epnumber %eptitle", OU
         if not os.path.exists(output):
             shutil.copy(rep + newname,output)
 
-def renameAll(dir):
+def renameAll(dir,lang,format,OUTPUTDIR):
     #Check if we have a folder
     if os.path.isdir(dir):
         res = os.listdir(dir)
         for r in res:
-            renameAll(os.path.join(dir,r))
+            renameAll(os.path.join(dir,r),lang,format,OUTPUTDIR)
     else:
         # Check extension
         ext = os.path.splitext(dir)[1]
@@ -165,5 +165,5 @@ OUTPUTDIR = "/media/ddata/serie/"
 lang = 'en'
 format = '%showname %seasonx%epnumber %eptitle'
 for arg in sys.argv[1:]:
-    renameAll(arg)
+    renameAll(arg,lang,format,OUTPUTDIR)
             
