@@ -46,6 +46,7 @@ def rename(film = "",lang="en",format="%showname %seasonx%epnumber %eptitle", OU
     title = title.replace(")","")
     title = title.replace("[","")
     title = title.replace("]","")
+    title = title.replace("&","and")
     show = title
     title = title.replace(" ","")
     if title[:3].lower() == "the":
@@ -91,10 +92,10 @@ def rename(film = "",lang="en",format="%showname %seasonx%epnumber %eptitle", OU
         title = title.rstrip();
     
     #p = re.search(season + "-" + ep1 + ".*<a href='[\[\]A-Za-z0-9\/\._\-:]{1,}'>([a-zA-Z0-9\*\&#\(\)\. ,\-_\?!'\"]*?)</a>",htmlSource)
-    p = re.search(season + "-" + ep1 + "[^<>]*<a href='[^']{1,}'>([^<]*?)</a>",htmlSource)
+    p = re.search(season + "-" + ep1 + "[^<>]*<a href='[^']{1,}'[^>]*>([^<]*?)</a>",htmlSource)
     if not p:
         #p = re.search(season + "-" + ep2 + ".*<a href='[\[\]A-Za-z0-9\/\._\-:]{1,}'>([a-zA-Z0-9\*\&#\(\)\. ,\-_\?!'\"]*?)</a>",htmlSource)
-        p = re.search(season + "-" + ep2 + "[^<>]*<a href='[^']{1,}'>([^<]*?)</a>",htmlSource)
+        p = re.search(season + "-" + ep2 + "[^<>]*<a href='[^']{1,}'[^>]*>([^<]*?)</a>",htmlSource)
         if not p:
             print "Can't find the episode name"
             sys.exit()

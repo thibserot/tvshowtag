@@ -73,6 +73,7 @@ def getFileUrl(htmlSource):
     return "http://www.tvsubtitles.net/" + p.group(1)
 
 def extractFile(url,rep):
+    print url
     zipFile = urllib.urlopen(url).read()
     fout = open(rep+'tmp.zip', "wb")
     fout.write(zipFile)
