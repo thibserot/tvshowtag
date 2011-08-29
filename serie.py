@@ -6,7 +6,7 @@ import re, urllib, sys, os.path, shutil, subtitles
 def rename(film = "",lang="en",format="%showname %seasonx%epnumber %eptitle", OUTPUTDIR="/media/ddata/serie/"):
     if film == "":
         print "No movie specified...Exiting"
-        sys.exit()
+        return
 
     # Extracting the path from the title
     idx = film.rfind('/')
@@ -24,10 +24,12 @@ def rename(film = "",lang="en",format="%showname %seasonx%epnumber %eptitle", OU
         ext = ""
     
     # Trying to find the tvshow's name, its episode and season
-    p = re.search("(.*?)[^0-9]([0-9]{1,2})[A-Za-z\. ]{1,2}([0-9]{1,2})(.*)"+ext,f)
+    #p = re.search("(.*?)[^0-9]([0-9]{1,2})[A-Za-z\. ]{1,2}([0-9]{1,2})(.*)"+ext,f)
+    #WARNING : Experimental
+    p = re.search("(.*?)[Ss]{0,1}([0-9]{1,2})[eExX\. ]{1,2}([0-9]{1,2})(.*)"+ext,f)
     if not p:
         print "Can't parse the filename"
-        sys.exit()
+        return
     title = p.group(1)
     season = p.group(2)
     ep = p.group(3)
@@ -76,12 +78,18 @@ def rename(film = "",lang="en",format="%showname %seasonx%epnumber %eptitle", OU
     if re.search("HTTP Error 404",htmlSource):
         print "Wrong url"
         if url.upper()[-2:] == "US":
-            url = url[:-2] + "_US"
-            print "Trying with ",url
-            htmlSource = urllib.urlopen(url).read()
+            url_alt = url[:-2] + "_US"
+            print "Trying with ",url_alt
+            htmlSource = urllib.urlopen(url_alt).read()
+            if re.search("HTTP Error 404",htmlSource):
+                url_alt = url[:-2]
+                print "Trying with ",url_alt
+                htmlSource = urllib.urlopen(url_alt).read()
+                if re.search("HTTP Error 404",htmlSource):
+                    return
             print show
         else:
-            sys.exit()
+            return
     
     p = re.search("<title>(.*?)\(a Titles.*?Air Dates Guide\)</title>",htmlSource)
     if not p:
@@ -98,7 +106,7 @@ def rename(film = "",lang="en",format="%showname %seasonx%epnumber %eptitle", OU
         p = re.search(season + "-" + ep2 + "[^<>]*<a href='[^']{1,}'[^>]*>([^<]*?)</a>",htmlSource)
         if not p:
             print "Can't find the episode name"
-            sys.exit()
+            return
     epname = p.group(1)
     newname = format
     newname = newname.replace("%showname", title)
@@ -140,6 +148,10 @@ def rename(film = "",lang="en",format="%showname %seasonx%epnumber %eptitle", OU
         output = OUTPUTDIR + repout + '/' + newname
         if not os.path.exists(output):
             shutil.copy(rep + newname,output)
+        if sub != -1:
+            output = OUTPUTDIR + repout + '/' + subname
+            if not os.path.exists(output):
+                shutil.copy(rep + subname,output)
 
 def renameAll(dir,lang,format,OUTPUTDIR):
     #Check if we have a folder
