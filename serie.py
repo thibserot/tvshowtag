@@ -7,7 +7,7 @@ def rename(film = "",lang="en",format="%showname %seasonx%epnumber %eptitle", OU
     if film == "":
         print "No movie specified...Exiting"
         return
-
+    film = urllib.unquote(film)
     # Extracting the path from the title
     idx = film.rfind('/')
     if idx != -1:
@@ -172,11 +172,29 @@ def renameAll(dir,lang,format,OUTPUTDIR):
             #f.close()
 
 
+class WritableObject:
+    def __init__(self):
+        self.content = []
+    def write(self,string):
+        self.content.append(string)
+
+
 #Main
+DEBUG = 0
+
+if DEBUG == 1:
+    foo = WritableObject()
+    sys.stdout = foo
+
 
 OUTPUTDIR = "/media/ddata/serie/"
 lang = 'en'
 format = '%showname %seasonx%epnumber %eptitle'
 for arg in sys.argv[1:]:
     renameAll(arg,lang,format,OUTPUTDIR)
-            
+
+if DEBUG == 1:
+    f = open("/tmp/tvshowtag.log","w")
+    for line in foo.content:
+        f.write(line)
+    f.close()
