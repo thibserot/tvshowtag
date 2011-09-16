@@ -26,10 +26,12 @@ def rename(film = "",lang="en",format="%showname %seasonx%epnumber %eptitle", OU
     # Trying to find the tvshow's name, its episode and season
     #p = re.search("(.*?)[^0-9]([0-9]{1,2})[A-Za-z\. ]{1,2}([0-9]{1,2})(.*)"+ext,f)
     #WARNING : Experimental
-    p = re.search("(.*?)[Ss]{0,1}([0-9]{1,2})[eExX\. ]{1,2}([0-9]{1,2})(.*)"+ext,f)
+    p = re.search("(.*?[0-9]{4}.*?)[Ss]{0,1}([0-9]{1,2})[eExX\. ]{1,2}([0-9]{1,2})(.*)"+ext,f)
     if not p:
-        print "Can't parse the filename"
-        return
+        p = re.search("(.*?)[Ss]{0,1}([0-9]{1,2})[eExX\. ]{1,2}([0-9]{1,2})(.*)"+ext,f)
+        if not p:
+            print "Can't parse the filename"
+            return
     title = p.group(1)
     season = p.group(2)
     ep = p.group(3)
