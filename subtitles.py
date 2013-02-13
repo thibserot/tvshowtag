@@ -52,7 +52,11 @@ def getUrlShow(show,htmlSource):
 def getShow(show):
     url = "http://www.tvsubtitles.net/search.php?q="+convertShow(show)
     print url
-    htmlSource = urllib.urlopen(url).read()
+    try:
+        htmlSource = urllib.urlopen(url).read()
+    except IOError,e:
+        print e
+        return -1
     res =getUrlShow(show,htmlSource)
     return res
 

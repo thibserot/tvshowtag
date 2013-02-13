@@ -1,7 +1,7 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
-import re, urllib, sys, os.path, shutil, subtitles
+import re, urllib, sys, os.path, shutil, subtitles, subtitles2
 
 def rename(film = "",lang="en",format="%showname %seasonx%epnumber %eptitle", OUTPUTDIR="/media/ddata/serie/"):
     if film == "":
@@ -50,6 +50,9 @@ def rename(film = "",lang="en",format="%showname %seasonx%epnumber %eptitle", OU
     title = title.replace(")","")
     title = title.replace("[","")
     title = title.replace("]","")
+    title = title.replace("?"," ")
+    title = title.replace(","," ")
+    title = title.replace(";"," ")
     title = title.replace("&","and")
     show = title
     title = title.replace(" ","")
@@ -126,6 +129,12 @@ def rename(film = "",lang="en",format="%showname %seasonx%epnumber %eptitle", OU
     newname = newname.replace(";"," ")
     newname = newname.replace("|","")
     newname = newname.replace("=","")
+    newname = newname.replace(";"," ")
+    newname = newname.replace(","," ")
+    newname = newname.replace("?"," ")
+    newname = newname.replace("!"," ")
+    newname = newname.replace(">"," ")
+    newname = newname.replace("<"," ")
     p = re.compile('\s+');
     newname = p.sub(' ',newname)
     newname = newname.lstrip();
@@ -135,25 +144,43 @@ def rename(film = "",lang="en",format="%showname %seasonx%epnumber %eptitle", OU
     
     # Looking for the subtitle file on tvsubtitles
     sub = subtitles.getSubtitle(show,season,ep,lang,rep,tag,HD)
+    print sub
     if sub != -1:
         os.rename(sub,rep+subname)
+    else:
+        sub = subtitles2.getSubtitle(show,season,ep,lang)
+        if sub != -1:
+            f = open(rep+subname,"w")
+            f.write(sub)
+            f.close()
     
     print rep + newname
     if os.path.exists(film):
         os.rename(film,rep + newname)
     
     # Copying the rename show on another device (if the path exist)
+    print "Checking OUTPUTDIR=",OUTPUTDIR
     if os.path.exists(OUTPUTDIR):
         repout = title + "/Season " + season
         if not os.path.exists(OUTPUTDIR + repout):
             os.makedirs(OUTPUTDIR + repout)
         output = OUTPUTDIR + repout + '/' + newname
+        print "output is",output
+        sync = "/media/Data/Torrents/sync/"
         if not os.path.exists(output):
-            shutil.copy(rep + newname,output)
+            print "Copying file to",output
+            shutil.copyfile(rep + newname,output)
+            if os.path.exists(sync):
+                print "Moving file to",sync
+                os.rename(rep + newname,sync + newname)
         if sub != -1:
             output = OUTPUTDIR + repout + '/' + subname
             if not os.path.exists(output):
-                shutil.copy(rep + subname,output)
+                print "Copying subtitle file to",output
+                shutil.copyfile(rep + subname,output)
+                if os.path.exists(sync):
+                    print "Moving subtitle file to",sync
+                    os.rename(rep + subname,sync + subname)
 
 def renameAll(dir,lang,format,OUTPUTDIR):
     #Check if we have a folder
@@ -165,7 +192,7 @@ def renameAll(dir,lang,format,OUTPUTDIR):
         # Check extension
         ext = os.path.splitext(dir)[1]
         ext = ext.lower()
-        if (ext in [".avi",".mpg",".mpeg",".mkv",".mp4",".divx"]):
+        if (ext in [".avi",".mpg",".mpeg",".mkv",".mp4",".divx",".3gp"]):
             film = dir
             rename(film,lang,format,OUTPUTDIR)
 
@@ -189,7 +216,9 @@ if DEBUG == 1:
     sys.stdout = foo
 
 
-OUTPUTDIR = "/media/ddata/serie/"
+OUTPUTDIR = "/media/Thibanir/Serie/"
+OUTPUTDIR = "/home/thibanir/.gvfs/disque\ dur\ on\ freebox/Vidéos/"
+OUTPUTDIR = "/media/freebox/TVShows/"
 lang = 'en'
 format = '%showname %seasonx%epnumber %eptitle'
 for arg in sys.argv[1:]:
