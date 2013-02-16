@@ -150,9 +150,13 @@ def rename(film = "",lang="en",format="%showname %seasonx%epnumber %eptitle", OU
     else:
         sub = subtitles2.getSubtitle(show,season,ep,lang)
         if sub != -1:
-            f = open(rep+subname,"w")
-            f.write(sub)
-            f.close()
+            if "Sorry, download limit exceeded" in sub:
+                print "Download limit exceeded"
+                sub = -1
+            else:
+                f = open(rep+subname,"w")
+                f.write(sub)
+                f.close()
     
     print rep + newname
     if os.path.exists(film):

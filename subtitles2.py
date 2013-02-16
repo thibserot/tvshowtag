@@ -67,6 +67,17 @@ def findEpisode(idSerie,seasonNb,epNb,language):
             if lang[0] == language:
                 languageSelected = lang[1]
 
+    seasons = re.findall("<button onmouseup=\"javascript:loadShow\([^,]*?,(\d+)",htmlSource)
+    if seasonNb not in seasons:
+        print "Wrong season"
+        return -1
+    else:
+        url = "http://www.addic7ed.com/ajax_loadShow.php?show=" + idSerie + "&season=" + seasonNb + "&langs=&hd=&hi="
+        htmlSource = readURL(url)
+        #f = open("addict7dSeasonCorrect.html","w")
+        #f.write(htmlSource)
+        #f.close()
+
     subtitles = re.findall("<tr.*?class=\"epeven completed\"><td>(\d+)</td><td>(\d+)</td><td>.*?</td><td>([^<]*)</td><td class=\"c\">([^<]*?)</td>.*?<td class=\"c\"><a href=\"([^\"]*?)\">Download</a></td>.*?</tr>",htmlSource,re.DOTALL)
     print len(subtitles)
     for subtitle in subtitles:
