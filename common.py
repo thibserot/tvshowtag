@@ -17,15 +17,18 @@ def readURL(url, lasturl="", encoding=""):
     htmlSource = handle.read()
     if encoding == "":
         encoding=handle.headers['content-type'].split('charset=')[-1]
-    #print "encoding=",encoding
+    print "encoding=",encoding
     
-    if encoding == "text/html":
+    if encoding == "text/html" or encoding == "":
         return htmlSource
     try:
         htmlSource = unicode(htmlSource,encoding)
     except UnicodeEncodeError:
         print "unicode error"
         htmlSource = unicode(htmlSource,"latin-1")
+    except LookupError:
+        print "lookup error"
+        pass
 
     return htmlSource
 

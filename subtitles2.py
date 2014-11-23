@@ -1,7 +1,7 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
-import re,difflib,sys
+import re,difflib,sys,codecs
 from common import *
 
 
@@ -22,6 +22,7 @@ def findSerie(showName):
     p = re.findall("(<select name=\"qsShow\".*?</select>)",htmlSource,re.DOTALL)
     
     if len(p) != 1:
+        print p
         print "Error more than one select found!!!"
         sys.exit()
     

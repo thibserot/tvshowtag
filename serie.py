@@ -1,7 +1,7 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
-import re, urllib, sys, os.path, shutil, subtitles, subtitles2
+import re, urllib, sys, os.path, shutil, subtitles, subtitles2, codecs
 
 def rename(film = "",lang="en",format="%showname %seasonx%epnumber %eptitle", OUTPUTDIR="/media/ddata/serie/"):
     if film == "":
@@ -61,6 +61,15 @@ def rename(film = "",lang="en",format="%showname %seasonx%epnumber %eptitle", OU
     
     if title[-4:].isdigit() and len(title) > 4 and not title[-5:].isdigit():
         title = title[:-4]+ '_'+title[-4:]
+
+    print title
+    if title.lower() in ["tomorrowpeople","tomorrowpeopleus"]:
+        title = "TomorrowPeople_2013"
+    elif title.lower() in ["dads_2013",]:
+        title = "Dads"
+    elif title.lower() in ["atlantis_2013",]:
+        title = "Atlantis"
+    print title
     
     title = title.lstrip();
     title = title.rstrip();
@@ -154,9 +163,15 @@ def rename(film = "",lang="en",format="%showname %seasonx%epnumber %eptitle", OU
                 print "Download limit exceeded"
                 sub = -1
             else:
-                f = open(rep+subname,"w")
-                f.write(sub)
-                f.close()
+                #print sub
+                try:
+                    f = open(rep+subname,"w")
+                    f.write(sub)
+                    f.close()
+                except UnicodeError, e:
+                    f = codecs.open(rep+subname,"w",encoding='utf-8')
+                    f.write(sub)
+                    f.close()
     
     print rep + newname
     if os.path.exists(film):
