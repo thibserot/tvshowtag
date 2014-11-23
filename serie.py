@@ -223,6 +223,7 @@ if DEBUG == 1:
 OUTPUTDIR = "/media/Thibanir/Serie/"
 OUTPUTDIR = "/home/thibanir/.gvfs/disque\ dur\ on\ freebox/Vidéos/"
 OUTPUTDIR = "/media/freebox/TVShows/"
+OUTPUTDIR = "/mnt/nas/TVShows/"
 lang = 'en'
 format = '%showname %seasonx%epnumber %eptitle'
 for arg in sys.argv[1:]:
